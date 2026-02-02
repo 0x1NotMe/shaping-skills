@@ -51,14 +51,73 @@ Often you have both: an existing system that must remain as-is, plus new pieces 
 ## Core Concepts
 
 ### Places
-A place is somewhere the user can navigate to in the UI. Each place:
-- Has a route/URL the user can visit
-- Contains UI affordances that are rendered there
-- Is fed by Code affordances that produce the data for those UI affordances
 
-All UI affordances exist within some place. When the user navigates, they move from one place to another.
+A Place is a **bounded context of interaction**. While you're in a Place:
+- You have a specific set of affordances available to you
+- You **cannot** interact with affordances outside that boundary
+- You must take an action to leave
 
-When spanning multiple systems, label places with their system (e.g., `PLACE: Checkout Page (frontend)`, `PLACE: Payment API (backend)`).
+**Place is perceptual, not technical.** It's not about URLs or components — it's about what the user experiences as their current context. A Place is "where you are" in terms of what you can do right now.
+
+#### The Blocking Test
+
+The simplest test for whether something is a different Place: **Can you interact with what's behind?**
+
+| Answer | Meaning |
+|--------|---------|
+| **No** | You're in a different Place |
+| **Yes** | Same Place, with local state changes |
+
+#### Examples
+
+| UI Element | Blocking? | Place? | Why |
+|------------|-----------|--------|-----|
+| Modal | Yes | Yes | Can't interact with page behind |
+| Confirmation popover | Yes | Yes | Must respond before returning (limit case of modal) |
+| Edit mode (whole screen transforms) | Yes | Yes | All affordances changed |
+| Checkbox reveals extra fields | No | No | Surroundings unchanged |
+| Dropdown menu | No | No | Can click away, non-blocking |
+| Tooltip | No | No | Informational, non-blocking |
+
+#### Local State vs Place Navigation
+
+When a control changes state, ask: did *everything* change, or just a subset while the surroundings stayed the same?
+
+| Type | What happens | How to model |
+|------|--------------|--------------|
+| **Local state** | Subset of UI changes, surroundings unchanged | Same Place, conditional N → dependent Us |
+| **Place navigation** | Entire screen transforms, or blocking overlay | Different Places |
+
+#### Mode-Based Places
+
+When a mode (like "edit mode") transforms the entire screen — different buttons, different affordances everywhere — model as separate Places:
+
+```
+PLACE: CMS Page (Read Mode)
+PLACE: CMS Page (Edit Mode)
+```
+
+The state flag (e.g., `editMode$`) that switches between them is a **navigation mechanism**, not a data store. Don't include it as an S in either Place.
+
+#### Three Questions for Any Control
+
+For any UI affordance, ask:
+1. Where did I come from to see this?
+2. Where am I now?
+3. Where do I go if I act on it?
+
+If the answer to #3 is "everything changes" or "I can't interact with what's behind until I respond," that's navigation to a different Place.
+
+#### Labeling Conventions
+
+| Pattern | Use |
+|---------|-----|
+| `PLACE: Page Name` | Standard page/route |
+| `PLACE: Page Name (Mode)` | Mode-based variant of a page |
+| `PLACE: Modal Name` | Modal dialog |
+| `PLACE: Backend` | API/database boundary |
+
+When spanning multiple systems, label with the system: `PLACE: Checkout Page (frontend)`, `PLACE: Payment API (backend)`.
 
 ### Affordances
 Things you can act upon:
