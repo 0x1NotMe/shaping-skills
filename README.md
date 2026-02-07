@@ -20,3 +20,7 @@ ln -s ~/.local/share/shaping-skills/shaping ~/.claude/skills/shaping
 ```
 
 Each skill must be a direct child of `~/.claude/skills/` so Claude Code can discover it. Symlinks keep them updatable with `git pull`.
+
+---
+
+This README was written by [Claude Code](https://claude.com/claude-code).
