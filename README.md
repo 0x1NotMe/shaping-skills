@@ -15,14 +15,14 @@
 ### Plugin (recommended)
 
 ```bash
-claude plugin marketplace add rjs/shaping-skills
+claude plugin marketplace add 0x1NotMe/shaping-skills
 claude plugin install shaping-skills
 ```
 
 ### Manual (symlinks)
 
 ```bash
-git clone https://github.com/rjs/shaping-skills.git ~/.local/share/shaping-skills
+git clone https://github.com/0x1NotMe/shaping-skills.git ~/.local/share/shaping-skills
 ln -s ~/.local/share/shaping-skills/plugins/shaping-skills/skills/breadboarding ~/.claude/skills/breadboarding
 ln -s ~/.local/share/shaping-skills/plugins/shaping-skills/skills/shaping ~/.claude/skills/shaping
 ```
